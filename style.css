@@ -1,0 +1,38 @@
+html {
+text-align: center;
+padding-top: 100px;
+}
+h1,h3,ul {
+
+    color: cornflowerblue;
+    font-family: 'Courier New', Courier, monospace;
+}
+a {
+    text-decoration: none;
+}
+ul, li, a {
+    list-style-type: none;
+}
+textarea{
+    width: 60%;
+    height: 150px;
+    padding: 16px,32px;
+}
+button {
+    padding: 16px,32px;
+    margin: 4px,2px;
+    text-align: center;
+    font-family: 'Courier New', Courier, monospace;
+    background-color: darkseagreen;
+    color: aliceblue;
+    border-radius: 5px;
+    border-style: none;
+}
+button:hover {
+    color: black;
+    background-color: white;
+    border-style: 2px solid black;
+}
+#file1,#etxt {
+display: none;
+}
