@@ -1,0 +1,36 @@
+#!/bin/bash
+
+COBOL_FILE="ATM001.PCO"  # Replace with your COBOL filename
+LOG_FILE="/tmp/cobol_compile.log"
+
+# Function to extract undeclared variables from error logs
+extract_undeclared_vars() {
+    grep "PCB-S-00223" "$LOG_FILE" | awk -F'"' '{print $2}'
+}
+
+# Step 1: Compile COBOL Code
+echo "Compiling $COBOL_FILE..."
+procob -x "$COBOL_FILE" 2> "$LOG_FILE"
+
+# Step 2: Check for Errors
+if grep -q "PCB-S-00223" "$LOG_FILE"; then
+    echo "Error: Undeclared variables detected."
+    
+    # Step 3: Automatically Fix Undeclared Variables
+    VARS=$(extract_undeclared_vars)
+    for VAR in $VARS; do
+        echo "Fixing undeclared variable: $VAR"
+        sed -i "/EXEC SQL BEGIN DECLARE SECTION END-EXEC./a \ \ 01 $VAR PIC X(20)." "$COBOL_FILE"
+    done
+    
+    echo "Recompiling after fixes..."
+    procob -x "$COBOL_FILE" 2> "$LOG_FILE"
+    
+    if [ $? -eq 0 ]; then
+        echo "Recompilation successful!"
+    else
+        echo "Errors still exist. Check $LOG_FILE."
+    fi
+else
+    echo "Compilation successful. No errors found."
+fi
